@@ -1,7 +1,6 @@
 #include "Protocol.h"
 #include <curl/curl.h>
 #include <memory>
-#include <iostream>
 
 //
 // Protocol
@@ -19,18 +18,45 @@ std::string Protocol::getKey() {
     return this->key;
 }
 
-std::size_t callback(const char *buffer, std::size_t size, std::size_t nmemb, void *ignore) {
+std::size_t callback(const char *buffer, std::size_t size, std::size_t nmemb, std::string *data) {
     std::size_t realSize = size * nmemb;
 
     for(int i = 0; i < realSize; i ++) {
-        std::cout << buffer[i];
+        data->push_back(buffer[i]);
     }
 
     return realSize;
 }
 
 void Protocol::getData() {
-    // TODO
+    this->jsonData.clear();
+
+    std::string url = this->computeUrl();
+
+    CURL *curl = curl_easy_init();
+    if(!curl) {
+        throw std::exception();
+    }
+
+    // Set URL
+    curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+    curl_easy_setopt(curl, CURLOPT_TIMEOUT, 10);
+    curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
+
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, callback);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &this->jsonData);
+
+    CURLcode result = curl_easy_perform(curl);
+
+    if(result != CURLE_OK) {
+        throw std::exception();
+    }
+
+    curl_easy_cleanup(curl);
+}
+
+std::string Protocol::getJsonData() {
+    return this->jsonData;
 }
 
 //

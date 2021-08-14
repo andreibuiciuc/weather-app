@@ -1,11 +1,16 @@
 #include <iostream>
-#include "tools/Protocol.h"
+#include "gui/WeatherWindow.h"
+#include "gui/MainWindow.h"
+#include <QApplication>
 
-int main() {
+int main(int argc, char* argv[]) {
+    QApplication app{ argc, argv };
 
-    Protocol* byName = new ProtocolByCity{ "London"};
-    std::cout << byName->computeUrl() << std::endl;
-    byName->getData();
+    WeatherWindow weatherWindow;
+    ChartWindow chartWindow;
 
-    return 0;
+    MainWindow mainWindow{ &weatherWindow, &chartWindow };
+    mainWindow.show();
+
+    return QApplication::exec();
 }

@@ -8,6 +8,10 @@ private:
 
     std::string jsonData;
 
+    virtual std::string computeUrl() = 0;
+
+    friend std::size_t callback(const char *buffer, std::size_t size, std::size_t nmemb, std::string *data);
+
 public:
     Protocol();
 
@@ -15,7 +19,7 @@ public:
 
     std::string getUrl();
 
-    virtual std::string computeUrl() = 0;
+    std::string getJsonData();
 
     void getData();
 
@@ -26,10 +30,10 @@ class ProtocolByCity: public Protocol {
 private:
     std::string cityName;
 
+    std::string computeUrl() override;
+
 public:
     explicit ProtocolByCity(const std::string& cityName);
-
-    std::string computeUrl() override;
 
     ~ProtocolByCity() override = default;
 };
@@ -39,10 +43,10 @@ class ProtocolByZipCode: public Protocol {
 private:
     std::string zipcode;
 
+    std::string computeUrl() override;
+
 public:
     explicit ProtocolByZipCode(const std::string& zipcode);
-
-    std::string computeUrl() override;
 
     ~ProtocolByZipCode() override = default;
 };
