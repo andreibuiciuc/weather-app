@@ -7,13 +7,15 @@
 #include <QHBoxLayout>
 #include <QPushButton>
 #include <Validator.h>
+#include <Service.h>
 
 class WeatherWindow: public QWidget {
 Q_OBJECT
 
 private:
     Validator *validator{};
-    Protocol *protocol{};
+    Service service;
+    // Protocol *protocol{};
 
     // Graphical elements
     QLineEdit *lineEdit{};
@@ -25,7 +27,7 @@ private:
     void connectSignalsSlots();
 
 public:
-    WeatherWindow();
+    explicit WeatherWindow(const Service& service);
 
     ~WeatherWindow() override = default;
 };

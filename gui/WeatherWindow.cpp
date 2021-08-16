@@ -2,7 +2,8 @@
 #include "WeatherWindow.h"
 #include <iostream>
 
-WeatherWindow::WeatherWindow() {
+WeatherWindow::WeatherWindow(const Service& service) {
+    this->service = service;
     this->initWeatherWindow();
     this->connectSignalsSlots();
 }
@@ -41,42 +42,27 @@ void WeatherWindow::connectSignalsSlots() {
     // Slot for search button
     QObject::connect(this->searchButton, &QPushButton::clicked, [this](){
         std::string input;
-
+        std::string option;
         if(this->searchCityButton->isChecked()) {
             input = this->lineEdit->text().toStdString();
+            option = "city";
             this->validator = new ValidatorCity{input};
-
-            try {
-                this->validator->validate();
-            } catch(std::exception& e) {
-                QMessageBox errorMessage;
-                errorMessage.setText(e.what());
-                errorMessage.show();
-            }
-
-            delete this->validator;
-
-            this->protocol = new ProtocolByCity{input};
         }
         else if(this->searchZipButton->isChecked()) {
             input = this->lineEdit->text().toStdString();
+            option = "zipcode";
             this->validator = new ValidatorZip{input};
-
-            try {
-                this->validator->validate();
-            } catch(std::exception& e) {
-                QMessageBox errorMessage;
-                errorMessage.setText(e.what());
-                errorMessage.show();
-            }
-
-            delete this->validator;
-
-            this->protocol = new ProtocolByZipCode{input};
         }
 
-        this->protocol->getData();
-        std::cout << this->protocol->getJsonData() << std::endl;
+        try {
+            this->validator->validate();
+        } catch(std::exception& e) {
+            QMessageBox errorMessage;
+            errorMessage.setText(e.what());
+            errorMessage.show();
+        }
+        delete this->validator;
+        this->service.getWeather(option, input);
     });
 }
 

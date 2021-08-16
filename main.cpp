@@ -6,7 +6,9 @@
 int main(int argc, char* argv[]) {
     QApplication app{ argc, argv };
 
-    WeatherWindow weatherWindow;
+    Service service;
+
+    WeatherWindow weatherWindow{ service };
     ChartWindow chartWindow;
 
     MainWindow mainWindow{ &weatherWindow, &chartWindow };

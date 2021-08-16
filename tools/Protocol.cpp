@@ -1,6 +1,6 @@
 #include "Protocol.h"
 #include <curl/curl.h>
-#include <memory>
+
 
 //
 // Protocol
@@ -28,10 +28,9 @@ std::size_t callback(const char *buffer, std::size_t size, std::size_t nmemb, st
     return realSize;
 }
 
-void Protocol::getData() {
-    this->jsonData.clear();
-
+std::string Protocol::getData() {
     std::string url = this->computeUrl();
+    std::string jsonData;
 
     CURL *curl = curl_easy_init();
     if(!curl) {
@@ -44,7 +43,7 @@ void Protocol::getData() {
     curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
 
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, callback);
-    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &this->jsonData);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &jsonData);
 
     CURLcode result = curl_easy_perform(curl);
 
@@ -53,10 +52,7 @@ void Protocol::getData() {
     }
 
     curl_easy_cleanup(curl);
-}
-
-std::string Protocol::getJsonData() {
-    return this->jsonData;
+    return jsonData;
 }
 
 //

@@ -6,8 +6,6 @@ private:
     std::string urlBase;
     std::string key;
 
-    std::string jsonData;
-
     virtual std::string computeUrl() = 0;
 
     friend std::size_t callback(const char *buffer, std::size_t size, std::size_t nmemb, std::string *data);
@@ -19,9 +17,7 @@ public:
 
     std::string getUrl();
 
-    std::string getJsonData();
-
-    void getData();
+    std::string getData();
 
     virtual ~Protocol() = default;
 };
