@@ -14,35 +14,42 @@ void Service::initProtocol(const std::string &option, const std::string &input) 
 }
 
 void Service::parseJsonData(const std::string &jsonData) {
-     std::cout << jsonData << std::endl;
-     
-     json weatherData = json::parse(jsonData);
+    json weatherData = json::parse(jsonData);
+    json coordData = json::parse(weatherData["coord"].dump());
 
-     json coordData = json::parse(weatherData["coord"].dump());
-     coordinates coord;
-     coord.latitude = coordData["lon"];
-     coord.longitude = coordData["lat"];
+    coordinates coord;
+    coord.latitude = coordData["lon"];
+    coord.longitude = coordData["lat"];
 
-     json mainData = json::parse(weatherData["main"].dump());
-     temperatures temp;
-     miscellaneous misc;
+    json mainData = json::parse(weatherData["main"].dump());
+    temperatures temp;
+    miscellaneous misc;
 
-     temp.temp = mainData["temp"];
-     temp.tempFeelsLike = mainData["feels_like"];
-     temp.tempMin = mainData["temp_min"];
-     temp.tempMax = mainData["temp_max"];
+    temp.temp = mainData["temp"];
+    temp.tempFeelsLike = mainData["feels_like"];
+    temp.tempMin = mainData["temp_min"];
+    temp.tempMax = mainData["temp_max"];
 
-     misc.humidity = mainData["humidity"];
-     misc.pressure = mainData["pressure"];
-     misc.visibility = weatherData["visibility"];
+    misc.humidity = mainData["humidity"];
+    misc.pressure = mainData["pressure"];
+    misc.visibility = weatherData["visibility"];
 
-//     json info = json::parse(weatherData["weather"].dump());
-//     std::string main = info["main"];
-//     std::string desc = info["description"];
-    std::string main = "asd";
-    std::string desc = "qwe";
+    json overall = json::parse(weatherData["weather"].dump());
+    std::string main = overall[0]["main"];
+    std::string desc = overall[0]["description"];
 
-    this->weather = Weather(coord, temp, misc, main, desc);
+    json sys = json::parse(weatherData["sys"].dump());
+    std::string country = sys["country"];
+
+    std::string name = weatherData["name"];
+
+    information info;
+    info.name = name;
+    info.country = country;
+    info.main = main;
+    info.desc = desc;
+
+    this->weather = Weather(coord, temp, misc, info);
     std::string forecast = this->weather.getInfo();
     std::cout << forecast << std::endl;
 }

@@ -20,18 +20,24 @@ typedef struct {
     int visibility;
 }miscellaneous;
 
+typedef struct {
+    std::string name;
+    std::string country;
+    std::string main;
+    std::string desc;
+}information;
+
 class Weather {
 private:
     coordinates coord{};
     temperatures temp{};
     miscellaneous misc{};
-    std::string main;
-    std::string desc;
+    information info{};
 
 public:
     Weather() = default;
 
-    Weather(coordinates coord, temperatures temp, miscellaneous misc, const std::string &main, const std::string& desc);
+    Weather(coordinates coord, temperatures temp, miscellaneous misc, const information &info);
 
     Weather(const Weather& obj);
 
